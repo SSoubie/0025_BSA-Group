@@ -1,0 +1,48 @@
+// ── FLOOD HAZARD — decision tree (Rounce et al. 2016) ─────────
+  // GUARD: Basin must have a meaningful glacier OR lake for GLOF
+  // mechanism to physically exist. Without either, cap at LOW (20).
+  // MIN_GLACIAL_KM2 = 0.1 km² — below this is a mathematical artefact.
+  var hasGlacier  = glac2019Val.gt(MIN_GLACIAL_KM2);
+  var hasLake     = lakeKm2Val.gt(MIN_GLACIAL_KM2);
+  var glacialRisk = hasGlacier.or(hasLake);
+
+  // Dynamic failure: max slope > 45° (rockfall) or > 55° (avalanche)
+  // Self-destructive: SLA ≥ 10° (Fujita et al. 2013)
+  var dynamicFailure  = slopeVal.gt(45).or(slopeVal.gt(55));
+  var selfDestructive = slaVal.gte(10);
+
+  var floodBaseScore = ee.Number(ee.Algorithms.If(
+    // Guard: no meaningful glacial system → always Low
+    glacialRisk.not(), 20,
+    ee.Algorithms.If(
+      dynamicFailure.and(selfDestructive),          90,  // Very High
+      ee.Algorithms.If(
+        dynamicFailure.and(selfDestructive.not()),   65,  // High
+        ee.Algorithms.If(
+          dynamicFailure.not().and(selfDestructive), 45,  // Medium
+          20                                              // Low
+        )
+      )
+    )
+  ));
+
+  // Tier elevation: both lake growth AND glacier loss above study average
+  // GUARD: Only compute percentages if base values are meaningful
+  var basinLakeGrowthPct = ee.Number(ee.Algorithms.If(
+    lake2010Val.gt(MIN_LAKE_KM2),
+    lakeKm2Val.subtract(lake2010Val).divide(lake2010Val).multiply(100),
+    0  // No meaningful lake in 2010 → growth % = 0
+  ));
+
+  var basinGlacLossPct = ee.Number(ee.Algorithms.If(
+    glac2019Val.gt(MIN_GLACIER_KM2),
+    glacLossVal.divide(glac2019Val).multiply(100),
+    0  // No meaningful glacier in 2019 → loss % = 0 (avoids 100% artefact)
+  ));
+
+  var floodHazard = ee.Number(ee.Algorithms.If(
+    basinLakeGrowthPct.gt(MEAN_LAKE_GROWTH_PCT)
+      .and(basinGlacLossPct.gt(MEAN_GLAC_LOSS_PCT)),
+    floodBaseScore.add(25).min(90),
+    floodBaseScore
+  )).round();

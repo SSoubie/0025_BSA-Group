@@ -1,0 +1,33 @@
+// ── EXPOSURE & IMPACT ─────────────────────────────────────────
+  // Population normalised to 90th percentile threshold (6,000)
+  // Agriculture mosaic (class 21 only) normalised to 20 km²
+  // Both scaled 0–50 and summed for 0–100 exposure score
+  var popScore      = popVal.divide(POP_THRESHOLD).min(1.0).multiply(50);
+  var agriScore     = agriVal.divide(20).min(1.0).multiply(50);
+  var exposureScore = popScore.add(agriScore);
+
+  // Impact = Hazard × Exposure / 100
+  var floodImpact   = floodHazard.divide(100).multiply(exposureScore).round();
+
+  return basin.set({
+    'flood_hazard':     floodHazard,
+    'exposure_score':   exposureScore.round(),
+    'flood_impact':     floodImpact,
+    // Intermediate values stored for Backend 3 validation and frontend display
+    'slope_near_lakes': slopeVal,
+    'sla_deg':          slaVal,
+    'lake_growth_pct':  basinLakeGrowthPct,
+    'glac_loss_pct':    basinGlacLossPct,
+    'pop_count':        popVal,
+    'agri_km2':         agriVal,
+    'glac2019_km2':     glac2019Val,
+    'lake2021_km2':     lakeKm2Val,
+    // GDBDI intermediate values for validation and frontend display
+    'glac_pct':         glacPct,    // % glacier area — Dim 1 input
+    'loss_pct_10yr':    lossPct10,  // 2019→2025 loss % — Dim 2 input
+    'nddi_mean':        nddiVal,    // dry-season mean NDDI — Dim 3 input
+    'gdbdi_dim1':       dim1,       // standardised Dim 1 score (1–5)
+    'gdbdi_dim2':       dim2,       // standardised Dim 2 score (1–5)
+    'gdbdi_dim3':       dim3        // standardised Dim 3 score (1–5)
+  });
+});
