@@ -699,9 +699,9 @@ The Cordillera Blanca Risk App displays glacial flood impact across 159 river mi
 
 The app runs entirely on Google Earth Engine using open-source data, requiring no local software or processing power. Users can click on the basins, zoom to see the variables in the map and indicators on the panel, and explore the methodology. The framework is reproducible and can be adapted to other glacierized mountain ranges across Peru and the broader Andean region.
 
-:::{.column-page}
-
-<iframe src='https://prueba-488410.projects.earthengine.app/view/cordillera-blanca---risk-qpp' width='100%' height='700px'></iframe>
+::: {.column-screen-inset}
+<iframe src='https://prueba-488410.projects.earthengine.app/view/cordillera-blanca---risk-qpp' style="width: 100%; height: 85vh; border: none; border-radius: 6px;"></iframe>
+:::
 
 :::
 ## How it Works 
