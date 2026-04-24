@@ -1,4 +1,4 @@
-# CASA00025 SQLitos' Cordillera Blanca Risk App (CBRA) {.unnumbered}
+# Cordillera Blanca Risk App (CBRA) {.unnumbered}
 
 ## Project Summary 
 
@@ -13,7 +13,6 @@ Peru holds about 70% of the world's tropical glaciers (Chevallier et al., 2011) 
 
 ## End User 
 
-Who are you building this application for? How does it address a need this community has?
 This app is designed to support decision-making for regional and municipal governments, water management authorities, and NGOs in Peru’s Ancash region, with a focus on those responsible for daily decisions related to disaster preparedness, agricultural planning, and resource allocation for downstream communities. It provides accessible risk maps tailored to decision-makers without a remote sensing background, enabling them to quickly identify vulnerable communities and allocate resources effectively. Ultimately, the tool can be expanded to service other glacier-depndent neighbouring governments in the Andes, such as Bolivia, and beyond.
 
 ## Data
@@ -92,7 +91,6 @@ All data are publicly available and processed entirely within Google Earth Engin
 
 #### Area of study 
 The study covers micro-watersheds in the Cordillera Blanca, Ancash (2025), delineated using official ANA boundaries and filtered by direct hydrological influence on the range.
-[We can add an image of the micro watersheds?]
 
 #### Glacier Retreat Model 
 Glacier extent mapped via Sentinel-2 MSI (2019–2025), dry season only, validated against RGI v7 (−2.1%). Total loss: 7.4% (496 → 459 km²).
@@ -682,6 +680,7 @@ var masterRisk   = ee.FeatureCollection(PROJECT + 'master_basin_risk');
 
 **Analysis per basin.** Clicking any basin opens a full statistics panel showing lake growth, glacier recession, land cover exposure, and population data. Four data layers can be toggled independently — Lake Growth (2010–2021), Glacier Recession (2019–2025), Land Cover Exposure (2024), and Settlements and Population (2024). All of them have been pre-processed during the Data Preparation and Precomputation stage.
 
+::: {style="max-height: 400px; overflow-y: auto;"}
 ```js
 function renderSelectedBasinUI(s) {
   if (!s) return;
@@ -770,6 +769,7 @@ function renderSelectedBasinUI(s) {
   ));
 }
 ```
+:::
 
 ![Cordillera Blanca Risk App - static image of basin selection](images/App static image.png)
 
