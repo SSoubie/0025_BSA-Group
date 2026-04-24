@@ -4,7 +4,12 @@
 // ════════════════════════════════════════════════════════════════
 
 // ── 1. ASSETS ────────────────────────────────────────────────────
-var PROJECT   = 'projects/cordillera-blanca-risk-app/assets/';
+var PROJECT   = 'users/jtparedes/';
+var PROJ_BOUND = 'users/jtparedes/boundbox';
+
+var boundary = ee.FeatureCollection(PROJ_BOUND);
+var STUDY_AREA = boundary.first().geometry();
+
 var A_lake2010   = ee.Image(PROJECT + 'lake_2010');
 var A_lake2021   = ee.Image(PROJECT + 'lake_2021');
 var A_lakeGrowth = ee.Image(PROJECT + 'lake_growth');
@@ -19,7 +24,6 @@ var A_pop        = ee.Image(PROJECT + 'population_2020');
 var masterRisk   = ee.FeatureCollection(PROJECT + 'master_basin_risk');
 
 // ── 2. CONSTANTS ─────────────────────────────────────────────────
-var STUDY_AREA = ee.FeatureCollection(PROJECT + 'boundbox').first().geometry();
 var MEAN_LAKE_GROWTH_PCT = 14.5;
 var MEAN_GLAC_LOSS_PCT   = 7.3;
 var GLACIER_COLOR        = '#0200b6';
@@ -90,6 +94,21 @@ var T = {
     methodFormula:  'Hazard¹ × Exposure² / 100',
     methodHazExp:   '¹ Hazard: Decision tree. Max slope within 500m of lake > 45° (rockfall) or > 55° (avalanche), calibrated across 159 basins. SLA ≥ 10° flags moraine instability. Tier elevated if lake growth AND glacier loss both exceed study-wide averages (14.5% over 2010–2021 and 7.3%).',
     methodExposure: '² Exposure: Total basin population (WorldPop 2020) + agriculture mosaic area (MapBiomas 2024 class 21, 2000–3800m), each normalised to 0–50 and summed.',  
+    reportBtn:      'Generate Basin Report',
+    reportTitle:    'Basin Report - copy and print to report',
+    reportNoBasin:  'Please select a basin first.',
+    reportBasin:    'BASIN REPORT',
+    reportArea:     'Basin area',
+    reportFlood:    'FLOOD RISK',
+    reportImpact:   'Impact',
+    reportHazard:   'Hazard',
+    reportExposure: 'Exposure',
+    reportTier:     'Tier elevated',
+    reportLake:     'LAKE GROWTH',
+    reportGlacier:  'GLACIER RECESSION',
+    reportLand:     'LAND COVER',
+    reportSettl:    'SETTLEMENTS & POPULATION',
+    reportPopDens:  'Population density'
   },
   es: {
     title:          'Cordillera Blanca - App de riesgo',
@@ -146,6 +165,21 @@ var T = {
     methodFormula:  'Peligro¹ × Exposición² / 100',
     methodHazExp:   '¹ Peligro: Árbol de decisión. Pendiente máxima dentro de 500 m de la laguna > 45° (rockfall) o > 55° (avalanche), calibrado en 159 cuencas. SLA ≥ 10° indica inestabilidad morrénica. El nivel se eleva si el crecimiento de laguna Y la pérdida glaciar superan los promedios del área de estudio (14.5% entre 2010–2021 y 7.3%).',
     methodExposure: '² Exposición: Población total de la cuenca (WorldPop 2020) + área de mosaico agrícola (MapBiomas 2024 clase 21, 2000–3800m), cada componente normalizado a 0–50 y luego sumado.',
+    reportBtn:      'Generar reporte de cuenca',
+    reportTitle:    'Reporte de cuenca - copiar e imprimir',
+    reportNoBasin:  'Selecciona una cuenca primero.',
+    reportBasin:    'REPORTE DE CUENCA',
+    reportArea:     'Área de cuenca',
+    reportFlood:    'RIESGO DE INUNDACIÓN',
+    reportImpact:   'Impacto',
+    reportHazard:   'Peligro',
+    reportExposure: 'Exposición',
+    reportTier:     'Nivel elevado',
+    reportLake:     'CRECIMIENTO DE LAGUNAS',
+    reportGlacier:  'RETROCESO GLACIAR',
+    reportLand:     'COBERTURA DE SUELO',
+    reportSettl:    'ASENTAMIENTOS Y POBLACIÓN',
+    reportPopDens:  'Densidad poblacional'
   }
 };
 function tr(k) { return T[LANG][k]; }
@@ -321,6 +355,73 @@ var reportBtn = ui.Button({
   onClick:function(){generateReport();}
 });
 
+// REPORT GENERATOR 
+var reportPanel = ui.Panel({
+  style: {
+    shown: false,
+    margin: '6px 12px 10px 12px',
+    padding: '10px',
+    backgroundColor: '#f5f5f5',
+    border: '1px solid #d9d9d9'
+  }
+});
+
+function generateReport() {
+  if (!lastBasinStats) {
+    promptLbl.setValue(tr('reportNoBasin'));
+    return;
+  }
+
+  var s = lastBasinStats;
+
+  var reportText =
+    tr('reportBasin') + ' — HYBAS_ID: ' + s.basinId + '\n' +
+    tr('reportArea') + ': ' + s.basinKm2.toFixed(1) + ' km²\n\n' +
+
+    tr('reportFlood') + '\n' +
+    tr('reportImpact') + ': ' + s.floodImpact + ' / 100 [' + riskLevel(s.floodImpact) + ']\n' +
+    tr('reportHazard') + ': ' + s.floodHazard + '\n' +
+    tr('reportExposure') + ': ' + s.exposureScore.toFixed(0) + '\n' +
+    tr('reportTier') + ': ' + (s.tierElevated ? tr('scYes') : tr('scNo')) + '\n\n' +
+
+    tr('reportLake') + ' (2010–2021)\n' +
+    tr('scArea2021') + ': ' + s.lakeKm2.toFixed(3) + ' km²\n' +
+    tr('scGrowth') + ': ' + (s.lakeGrowthPct >= 0 ? '+' : '') + s.lakeGrowthPct.toFixed(1) + '%\n\n' +
+
+    tr('reportGlacier') + ' (2019–2025)\n' +
+    tr('scArea2025') + ': ' + s.g2025.toFixed(2) + ' km²\n' +
+    tr('scLoss') + ': ' + s.glacLoss.toFixed(2) + ' km²\n' +
+    tr('scLossRate') + ': ' + s.lossPct.toFixed(1) + '%\n\n' +
+
+    tr('reportLand') + ' (2024)\n' +
+    tr('scExposedLand') + ': ' + s.cropKm2.toFixed(2) + ' km²\n' +
+    tr('scAgriMosaic') + ': ' + s.agriKm2.toFixed(2) + ' km²\n\n' +
+
+    tr('reportSettl') + '\n' +
+    tr('scSettlArea') + ': ' + s.settKm2.toFixed(2) + ' km²\n' +
+    tr('scTotalPop') + ': ' + s.popTotal.toLocaleString() + '\n' +
+    tr('reportPopDens') + ': ' + (s.popTotal / s.basinKm2).toFixed(1) + (LANG === 'es' ? ' personas/km²' : ' people/km²');
+
+  reportPanel.clear();
+
+  reportPanel.add(ui.Label(tr('reportTitle'), {
+    fontSize: '13px',
+    fontWeight: 'bold',
+    color: '#00274F',
+    backgroundColor:'rgba(255,255,255,0)',
+    margin: '0px 0px 6px 0px'
+  }));
+
+  reportPanel.add(ui.Label(reportText, {
+    fontSize: '10px',
+    color: '#333333',
+    backgroundColor:'rgba(255,255,255,0)',
+    whiteSpace: 'pre-wrap',
+    margin: '0px'
+  }));
+
+  reportPanel.style().set('shown', true);
+}
 
 // Footnotes
 var footBox = ui.Panel({
@@ -381,6 +482,7 @@ var mainContent = ui.Panel([
   riskBoxRow,
   statsGrid,
   reportBtn,
+  reportPanel,
   divLine(),
   footBox
 ], ui.Panel.Layout.flow('vertical'), {
@@ -494,8 +596,14 @@ function refreshText() {
   mapAgriLbl.widgets().get(1).setValue(tr('mapAgri'));
   mapLakeLbl.widgets().get(1).setValue(tr('mapLake'));
   mapSettlLbl.widgets().get(1).setValue(tr('mapSettl'));  
-  if (lastBasinStats) {renderSelectedBasinUI(lastBasinStats);}
+  
+  if (lastBasinStats) {
+  renderSelectedBasinUI(lastBasinStats);
+    if (reportPanel.style().get('shown')) {
+      generateReport();}}
+    
   methodBtn.setLabel(tr('methodBtn'));
+  reportBtn.setLabel(tr('reportBtn'));
   backBtn.setLabel(tr('backBtn'));
   methodTitleLbl.setValue(tr('methodTitle'));
   methodIntroLbl.setValue(tr('methodIntro'));
@@ -516,6 +624,8 @@ function resetUI() {
   landBody.clear(); settBody.clear();
   reportBtn.style().set('shown',false);
   lastBasinStats = null;
+  reportPanel.clear();
+  reportPanel.style().set('shown', false);
   mainMap.layers().reset();
   mainMap.addLayer(
     ee.Image().byte().paint({featureCollection:basins,color:1,width:1}),
@@ -661,45 +771,6 @@ function addBasinLayers(basinGeom) {
   mainMap.addLayer(boundaryOutline, {palette: ['#000000']}, 'Study Area Boundary');
 
   mainMap.centerObject(basinGeom,11.5);
-}
-
-// ── 14. REPORT GENERATOR ──────────────────────────────────────────
-function generateReport() {
-  if (!lastBasinStats){print('No basin selected.');return;}
-  var s = lastBasinStats;
-  print('══════════════════════════════════════════');
-  print('BASIN REPORT \u2014 HYBAS_ID: '+s.basinId);
-  print('Basin area: '+s.basinKm2.toFixed(1)+' km\u00b2');
-  print('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
-  print('FLOOD RISK');
-  print('  Impact:   '+s.floodImpact+' / 100  ['+riskLevel(s.floodImpact)+']');
-  print('  Hazard:   '+s.floodHazard);
-  print('  Exposure: '+s.exposureScore.toFixed(0));
-  print('  Tier elevated: '+(s.tierElevated?'Yes':'No'));
-  print('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
-  print('LAKE GROWTH (2010\u20132021)');
-  print('  Area 2021: '+s.lakeKm2.toFixed(3)+' km\u00b2');
-  print('  Growth:    '+(s.lakeGrowthPct>=0?'+':'')+s.lakeGrowthPct.toFixed(1)+'%');
-  print('  Above avg? '+(s.lakeGrowthPct>MEAN_LAKE_GROWTH_PCT?'Yes':'No')+
-        '  (study avg: '+MEAN_LAKE_GROWTH_PCT+'%)');
-  print('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
-  print('GLACIER RECESSION (2019\u20132025)');
-  print('  Area 2025: '+s.g2025.toFixed(2)+' km\u00b2');
-  print('  Loss:      '+s.glacLoss.toFixed(2)+' km\u00b2');
-  print('  Loss rate: '+s.lossPct.toFixed(1)+'%');
-  print('  Above avg? '+(s.lossPct>MEAN_GLAC_LOSS_PCT?'Yes':'No')+
-        '  (study avg: '+MEAN_GLAC_LOSS_PCT+'%)');
-  print('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
-  print('LAND COVER (2024, 2000\u20133800m)');
-  print('  Exposed land\u2079: '+s.cropKm2.toFixed(2)+' km\u00b2');
-  print('  Agri mosaic:   '+s.agriKm2.toFixed(2)+' km\u00b2');
-  print('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
-  print('SETTLEMENTS & POPULATION');
-  print('  Settlement area: '+s.settKm2.toFixed(2)+' km\u00b2');
-  print('  Basin density:   '+(s.settKm2/s.basinKm2*100).toFixed(2)+'%');
-  print('  Total popuation\u2077:     '+s.popTotal.toLocaleString());
-  print('  Population density:    '+(s.popTotal/s.basinKm2).toFixed(1)+' people/km\u00b2');
-  print('══════════════════════════════════════════');
 }
 
 // ── 14. STATS TRANSLATION ─────────────────────────────────────────────
