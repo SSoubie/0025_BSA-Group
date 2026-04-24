@@ -94,7 +94,7 @@ The study covers micro-watersheds in the Cordillera Blanca, Ancash (2025), delin
 
 #### Glacier Retreat Model 
 Glacier extent mapped via Sentinel-2 MSI (2019–2025), dry season only, validated against RGI v7 (−2.1%). Total loss: 7.4% (496 → 459 km²).
-![Pie de imagen: Methodology for Glacier Retreat Model, adapted from: Veettil (2018), Veettil & Souza (2017), Cárdenas et al. (2024), RGI Consortium (2023) | Result: 7.4% glacier loss 2019–2025 (496 → 459 km²)](images/Glacier Retreat Model.png)
+![Pie de imagen: Methodology for Glacier Retreat Model, adapted from: Veettil (2018), Veettil & Souza (2017), Cárdenas et al. (2024), RGI Consortium (2023) | Result: 7.4% glacier loss 2019–2025 (496 → 459 km²)](images/Glacier_retreat_model.png)
 
 ::: {.scroll-container style="overflow-y: scroll; height: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 6px;"}
 ```javascript
@@ -532,9 +532,9 @@ var hazardRaster = lakeGrowthStatsClean
 #### Flood Hazard Assessment 
 Decision-tree adapted from Rounce et al. (2016): dynamic failure (slope >45°/55°) and self-destructive failure (SLA ≥10°).
 
-![Thresholds calibrated against 159 study basins and 5 historical GLOF sites in the Cordillera Blanca. Original Rounce et al. (2016) thresholds (30°/45°) raised to 45°/55° following Sattar et al. (2023). Tier elevation based on Sattar et al. (2021).](images/Glacier Basin Flood Index.png)
+![Thresholds calibrated against 159 study basins and 5 historical GLOF sites in the Cordillera Blanca. Original Rounce et al. (2016) thresholds (30°/45°) raised to 45°/55° following Sattar et al. (2023). Tier elevation based on Sattar et al. (2021).](images/Glacier_basin_flood_index.png)
 
-![Dynamic failure: Rounce et al. (2016), Sattar et al. (2023) — slope thresholds for rockfall (≥45°) and avalanche (≥55°) susceptibility. Self-destructive failure: Fujita et al. (2013) — SLA ≥10° as indicator of moraine structural instability](images/Flood Hazard Assessment.png)
+![Dynamic failure: Rounce et al. (2016), Sattar et al. (2023) — slope thresholds for rockfall (≥45°) and avalanche (≥55°) susceptibility. Self-destructive failure: Fujita et al. (2013) — SLA ≥10° as indicator of moraine structural instability](images/Flood_hazard.png)
 
 ::: {.scroll-container style="overflow-y: scroll; height: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 6px;"}
 ```javascript
@@ -595,7 +595,7 @@ $$ \Large \text{Impact} = \frac{\text{Hazard} \times \text{Exposure}}{100} $$
 
 Exposure combines population (WorldPop, 2020) and agricultural land (MapBiomas, 2024), each normalized 0–50.
 
-![Risk operationalized as Impact = Hazard × Exposure, following the IPCC risk framework (IPCC, 2014) and Rounce et al. (2016). Population threshold (6,000) derived from the 90th percentile of basin distribution across 159 study basins. Agricultural threshold (20 km²) calibrated to local district-scale impact. WorldPop (2020), MapBiomas Collection 3 (2024).](images/Exposure and Impact Scoring.png)
+![Risk operationalized as Impact = Hazard × Exposure, following the IPCC risk framework (IPCC, 2014) and Rounce et al. (2016). Population threshold (6,000) derived from the 90th percentile of basin distribution across 159 study basins. Agricultural threshold (20 km²) calibrated to local district-scale impact. WorldPop (2020), MapBiomas Collection 3 (2024).](images/Exposure.png)
 
 ::: {.scroll-container style="overflow-y: scroll; height: 400px; padding: 20px; border: 1px solid #ddd; border-radius: 6px;"}
 ```javascript
@@ -771,7 +771,7 @@ function renderSelectedBasinUI(s) {
 ```
 :::
 
-![Cordillera Blanca Risk App - static image of basin selection](images/App static image.png)
+![Cordillera Blanca Risk App - static image of basin selection](images/App_static_image.png)
 
 **Methodology panel.** A methodology panel explains how the impact score is calculated, ensuring full scrutiny and transparency.
 
@@ -802,12 +802,12 @@ Future development could incorporate higher-resolution DEMs such as TanDEM-X (12
 <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfJrh8aZj19ZaZ3vomOa_uPyMDgxS6QZ7oAX5AaCsM7lW6wVw/viewform?embedded=true" width="640" height="1359" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 
 ## Stakeholder Engagement
-A special thanks to the Inter-American Development Bank (IDB), namely Haris Sanahuja and Alonso Brenes Torres, for their invaluable feedback and support during the development of this application. Their insights have been crucial in narrowing the our focus from drought and floods to floods only and ensuring that the tool is practically relevant for SINAGERD stakeholders.
+A special thanks to the Inter-American Development Bank (IDB), namely Haris Sanahuja and Alonso Brenes Torres, for their invaluable feedback and support during the development of this application. Their insights have been crucial in narrowing the our focus from drought and floods to floods only and ensuring that the tool is practically relevant for SINAGERD stakeholders. The IDB also detailed interest in adding the methodology to IDB's RiskHub with continued refinement.
 
 ::: {layout-ncol=2}
-![Engaging IDB GLOF Stakeholders](images/IDB Peru GLOF Stakeholder Engagement Email.png)
+![Engaging IDB GLOF Stakeholders](images/IDB_Peru_Stakeholder_Email.png)
 
-![SQLitos Tool Walkthrough with IDB ](images/Stakeholder Engagement Call - IDB.jpeg)
+![SQLitos Tool Walkthrough with IDB ](images/Stakeholder_Call_IDB.jpeg)
 :::
 
 ## Bibliography
