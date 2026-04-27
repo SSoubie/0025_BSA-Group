@@ -6,7 +6,7 @@
 
 ---
 
-A Google Earth Engine tool mapping Glacial Lake Outburst Flood (GLOF) risk across 159 river basins in the Cordillera Blanca, Peru. Built for CENEPRED staff to identify communities at risk from glacial melt — no remote sensing expertise required.
+A Google Earth Engine tool mapping Glacial Lake Outburst Flood (GLOF) risk across 159 river basins in the Cordillera Blanca, Peru. Built for CENEPRED and IDB stakeholders to identify which communities face the highest exposure to glacial flooding — no remote sensing expertise required. Updatable annually, open-source, and reproducible across other glacierized mountain ranges in the Andes.
 
 **Impact = Hazard × Exposure / 100**
 

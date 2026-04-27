@@ -10,7 +10,7 @@ var cordilleraBlanca = ee.Geometry.Rectangle([-77.8, -10.0, -77.0, -8.5]);
 // Load the SRTM Digital Elevation Model (30m resolution) and clip to study area.
 // The DEM is used to define an elevation mask that restricts the exposure
 // analysis to the altitudinal range where Andean farming communities
-// actually operate (2000–3800 m). Without this mask, MapBiomas land cover
+// actually operate (among 2000–3800 m). Without this mask, MapBiomas land cover
 // classes would include high-altitude pixels (>3800 m) that are ecologically
 // implausible as cultivated land, and low-lying areas (<2000 m) that are
 // not glacier-dependent. The elevation filter ensures that only communities
