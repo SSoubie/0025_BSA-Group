@@ -1,11 +1,17 @@
-Use this repository to host a website for your CASA0025 final project by following these stpes: 
+# Cordillera Blanca Risk App (CBRA)
 
-1. clone this repository 
-2. install [quarto](https://quarto.org/docs/download/) 
-3. edit the 'index.qmd' file with the contents of your project
-4. using terminal, navigate to the project directory and run "quarto render" 
-5. push the changes to your github repository 
-6. on github, navigate to Settings>Pages>Build and Deployment. Make sure that under "Source" it says "deploy from branch". Under "Branch", select "Main" in the first dropdown and "Docs" under the second drop down. Then press "Save" 
+**CASA0025 · SQLitos** — Emily Deeb, Santiago Soubie, Nadia Cabrera Salazar, Tabata Paredes Condor, Chad Barrett
 
-Your website should now be available under 
-https://{your_username}.github.io/{your_repo_name}
+🌐 [emilydeeb.github.io/0025_BSA-Group](https://emilydeeb.github.io/0025_BSA-Group/)
+
+---
+
+A Google Earth Engine tool mapping Glacial Lake Outburst Flood (GLOF) risk across 159 river basins in the Cordillera Blanca, Peru. Built for CENEPRED staff to identify communities at risk from glacial melt — no remote sensing expertise required.
+
+**Impact = Hazard × Exposure / 100**
+
+Hazard is scored via a decision tree (Rounce et al., 2016) combining dynamic failure (slope ≥45°/55°) and self-destructive failure (SLA ≥10°). Exposure combines population (WorldPop 2020) and agricultural land (MapBiomas 2024).
+
+Key findings: 7.4% glacier loss (2019–2025) · 16% lake growth (2010–2021)
+
+All data and code are open source. reviewed with the Inter-American Development Bank (IDB).
