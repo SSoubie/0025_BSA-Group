@@ -159,7 +159,7 @@ var joined = ee.Join.saveFirst('early_match').apply({
 // 1. How much the lake grew (%)
 // 2. Mean slope within 500m (avalanche trigger risk)
 // 3. SLA — mean slope within 1000m (moraine stability)
-// 4. A combined hazard score (0–1)
+// 4. A combined hazard score (0– 1)
 var lakeGrowthStats = joined.map(function(f) {
 
   var lakeGeom  = f.geometry(); // The 2021 lake polygon shape
@@ -185,6 +185,7 @@ var lakeGrowthStats = joined.map(function(f) {
     maxPixels:  1e10,
     bestEffort: true
   }).get('slope', 0)); // Default 0 if no result
+
 
   // ── Slope metric 2: SLA within 1000m (moraine stability) ─────
   // The Steep Lakefront Area measures how steeply the terrain drops
